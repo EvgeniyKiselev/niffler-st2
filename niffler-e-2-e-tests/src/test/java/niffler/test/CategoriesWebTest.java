@@ -2,6 +2,7 @@ package niffler.test;
 
 import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.Selenide;
+import io.qameta.allure.AllureId;
 import niffler.jupiter.annotation.GenerateCategory;
 import niffler.model.CategoryJson;
 import org.junit.jupiter.api.BeforeEach;
@@ -23,6 +24,7 @@ public class CategoriesWebTest extends BaseWebTest {
         $("button[type='submit']").click();
     }
 
+    @AllureId("98")
     @GenerateCategory(
             username = USER,
             category = "Shopping1")

@@ -2,6 +2,7 @@ package niffler.test;
 
 import com.codeborne.selenide.CollectionCondition;
 import com.codeborne.selenide.Selenide;
+import io.qameta.allure.AllureId;
 import niffler.jupiter.annotation.GenerateCategory;
 import niffler.jupiter.annotation.GenerateSpend;
 import niffler.model.CurrencyValues;
@@ -24,6 +25,7 @@ public class SpendsWebTest extends BaseWebTest {
         $("button[type='submit']").click();
     }
 
+    @AllureId("99")
     @GenerateCategory(
             username = USER,
             category = "Learning"

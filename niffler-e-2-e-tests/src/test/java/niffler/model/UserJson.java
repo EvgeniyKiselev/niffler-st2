@@ -2,9 +2,12 @@ package niffler.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Data;
+
 import java.util.Objects;
 import java.util.UUID;
 
+@Data
 public class UserJson {
     @JsonProperty("id")
     private UUID id;
@@ -28,70 +31,6 @@ public class UserJson {
     public UserJson() {
     }
 
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getFirstname() {
-        return firstname;
-    }
-
-    public void setFirstname(String firstname) {
-        this.firstname = firstname;
-    }
-
-    public String getSurname() {
-        return surname;
-    }
-
-    public void setSurname(String surname) {
-        this.surname = surname;
-    }
-
-    public CurrencyValues getCurrency() {
-        return currency;
-    }
-
-    public void setCurrency(CurrencyValues currency) {
-        this.currency = currency;
-    }
-
-    public String getPhoto() {
-        return photo;
-    }
-
-    public void setPhoto(String photo) {
-        this.photo = photo;
-    }
-
-    public FriendState getFriendState() {
-        return friendState;
-    }
-
-    public void setFriendState(FriendState friendState) {
-        this.friendState = friendState;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -103,5 +42,18 @@ public class UserJson {
     @Override
     public int hashCode() {
         return Objects.hash(id, username, firstname, surname, currency, photo, friendState);
+    }
+
+    @Override
+    public String toString() {
+        return "UserJson{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", firstname='" + firstname + '\'' +
+                ", surname='" + surname + '\'' +
+                ", currency=" + currency +
+                ", photo='" + photo + '\'' +
+                ", friendState=" + friendState +
+                '}';
     }
 }
