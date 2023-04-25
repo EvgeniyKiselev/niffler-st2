@@ -2,20 +2,17 @@ package niffler.test;
 
 import com.codeborne.selenide.CollectionCondition;
 import com.codeborne.selenide.Selenide;
+import niffler.jupiter.annotation.GenerateCategory;
 import niffler.jupiter.annotation.GenerateSpend;
-import niffler.jupiter.extension.GenerateSpendExtension;
 import niffler.model.CurrencyValues;
 import niffler.model.SpendJson;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 
 import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$$;
 
-
-@ExtendWith(GenerateSpendExtension.class)
 public class SpendsWebTest extends BaseWebTest {
 
     @BeforeEach
@@ -27,6 +24,10 @@ public class SpendsWebTest extends BaseWebTest {
         $("button[type='submit']").click();
     }
 
+    @GenerateCategory(
+            username = USER,
+            category = "Learning"
+    )
     @GenerateSpend(
             username = USER,
             description = "QA GURU ADVANCED VOL 2",
@@ -35,7 +36,7 @@ public class SpendsWebTest extends BaseWebTest {
             category = "Learning"
     )
     @Test
-    void spendShouldBeDeletedByActionInTable(SpendJson spend) {
+    public void spendShouldBeDeletedByActionInTable(SpendJson spend) {
         $(".spendings-table tbody").$$("tr")
                 .find(text(spend.getDescription()))
                 .$$("td").first()

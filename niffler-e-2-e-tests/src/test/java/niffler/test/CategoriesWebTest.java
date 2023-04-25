@@ -3,20 +3,15 @@ package niffler.test;
 import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.Selenide;
 import niffler.jupiter.annotation.GenerateCategory;
-import niffler.jupiter.extension.GenerateCategoryExtension;
 import niffler.model.CategoryJson;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 
 import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.open;
-import static niffler.test.BaseWebTest.PASSWORD;
-import static niffler.test.BaseWebTest.USER;
 
-@ExtendWith(GenerateCategoryExtension.class)
-public class CategoriesWebTest {
+public class CategoriesWebTest extends BaseWebTest {
     @BeforeEach
     void doLogin() {
         Configuration.baseUrl = "http://127.0.0.1:3000";
@@ -30,7 +25,7 @@ public class CategoriesWebTest {
 
     @GenerateCategory(
             username = USER,
-            category = "Shopping")
+            category = "Shopping1")
     @Test
     void categoryShouldBeCreated(CategoryJson category) {
         open("/profile");

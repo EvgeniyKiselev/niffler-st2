@@ -1,17 +1,14 @@
 package niffler.jupiter.extension;
 
-import java.util.Date;
 import niffler.api.SpendService;
 import niffler.jupiter.annotation.GenerateSpend;
 import niffler.model.SpendJson;
 import okhttp3.OkHttpClient;
-import org.junit.jupiter.api.extension.BeforeEachCallback;
-import org.junit.jupiter.api.extension.ExtensionContext;
-import org.junit.jupiter.api.extension.ParameterContext;
-import org.junit.jupiter.api.extension.ParameterResolutionException;
-import org.junit.jupiter.api.extension.ParameterResolver;
+import org.junit.jupiter.api.extension.*;
 import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
+
+import java.util.Date;
 
 public class GenerateSpendExtension implements ParameterResolver, BeforeEachCallback {
 
@@ -46,7 +43,8 @@ public class GenerateSpendExtension implements ParameterResolver, BeforeEachCall
             SpendJson created = spendService.addSpend(spend)
                 .execute()
                 .body();
-            context.getStore(NAMESPACE).put("spend", created);
+            context.getStore(NAMESPACE)
+                    .put("spend", created);
         }
     }
 
