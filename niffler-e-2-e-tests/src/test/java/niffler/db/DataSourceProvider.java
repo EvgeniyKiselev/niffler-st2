@@ -1,13 +1,11 @@
 package niffler.db;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-import java.util.function.Function;
-import javax.sql.DataSource;
 import niffler.config.Config;
 import org.postgresql.ds.PGSimpleDataSource;
+
+import javax.sql.DataSource;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public enum DataSourceProvider {
   INSTANCE;

@@ -39,23 +39,20 @@ public class UserDataTest {
         userService.updateUserInfo(user)
                 .execute();
         UserJson afterUpdate = userService.currentUser(user.getUsername())
-                .execute().
-                body();
+                .execute()
+                .body();
+        assert afterUpdate != null;
         Assertions.assertAll(
                 () -> {
-                    assert afterUpdate != null;
                     assertEquals(user.getUsername(), afterUpdate.getUsername());
                 },
                 () -> {
-                    assert afterUpdate != null;
                     assertEquals(user.getFirstname(), afterUpdate.getFirstname());
                 },
                 () -> {
-                    assert afterUpdate != null;
                     assertEquals(user.getSurname(), afterUpdate.getSurname());
                 },
                 () -> {
-                    assert afterUpdate != null;
                     assertEquals(user.getCurrency(), afterUpdate.getCurrency());
                 }
         );

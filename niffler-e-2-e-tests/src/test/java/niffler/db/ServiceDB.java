@@ -17,8 +17,8 @@ public enum ServiceDB {
 
   public String getJdbcUrl() {
     return String.format(jdbcUrl,
-        Config.getConfig().getDBHost(),
-        Config.getConfig().getDBPort()
+            Config.getConfig().getDBHost(),
+            Config.getConfig().getDBPort()
     );
   }
 }
