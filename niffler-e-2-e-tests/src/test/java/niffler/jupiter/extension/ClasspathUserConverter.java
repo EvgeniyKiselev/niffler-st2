@@ -8,9 +8,9 @@ import org.junit.jupiter.params.converter.ArgumentConverter;
 
 import java.io.IOException;
 
-public class ClasspathUpdateUserConverter implements ArgumentConverter {
+public class ClasspathUserConverter implements ArgumentConverter {
 
-  private ClassLoader cl = ClasspathUpdateUserConverter.class.getClassLoader();
+  private ClassLoader cl = ClasspathUserConverter.class.getClassLoader();
   private static ObjectMapper om = new ObjectMapper();
 
   @Override

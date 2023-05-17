@@ -2,7 +2,7 @@ package niffler.jupiter.extension;
 
 import io.qameta.allure.AllureId;
 import niffler.db.dao.NifflerUsersDAO;
-import niffler.db.dao.NifflerUsersDAOJdbc;
+import niffler.db.dao.NifflerUsersDAODB;
 import niffler.db.entity.Authority;
 import niffler.db.entity.AuthorityEntity;
 import niffler.db.entity.UserEntity;
@@ -37,7 +37,7 @@ public class CreateUserViaDB  implements BeforeEachCallback, AfterEachCallback, 
         UserEntity user;
 
         if(createUserAnno != null) {
-            NifflerUsersDAO usersDAO = new NifflerUsersDAOJdbc();
+            NifflerUsersDAO usersDAO = new NifflerUsersDAODB();
             user = new UserEntity();
             user.setUsername(createUserAnno.username());
             user.setPassword(createUserAnno.password());
@@ -46,6 +46,7 @@ public class CreateUserViaDB  implements BeforeEachCallback, AfterEachCallback, 
             user.setAccountNonLocked(createUserAnno.accountNonLocked());
             user.setCredentialsNonExpired(createUserAnno.credentialsNonExpired());
             user.setDeleteAfterTest(createUserAnno.deleteAfterTest());
+            user.setDbType(createUserAnno.dbType());
             user.setAuthorities(Arrays.stream(Authority.values()).map(
                     a -> {
                         AuthorityEntity ae = new AuthorityEntity();
@@ -62,12 +63,13 @@ public class CreateUserViaDB  implements BeforeEachCallback, AfterEachCallback, 
     @Override
     public void afterEach(ExtensionContext context) throws Exception {
         final String testId = getTestId(context);
-
+        final String testID = context.getRequiredTestClass() + String.valueOf(context.getTestMethod());
         int executeUpdate = 0;
 
         if (context.getRequiredTestMethod().getAnnotation(CreateUser.class).deleteAfterTest()) {
-            NifflerUsersDAO usersDAO = new NifflerUsersDAOJdbc();
-            executeUpdate = usersDAO.deleteUser(((UserEntity) context.getStore(CREATE_USER_NAMESPACE).get(testId)).getUsername());
+            NifflerUsersDAO usersDAO = new NifflerUsersDAODB();
+            executeUpdate = usersDAO.deleteUser(new UserEntity((context.getStore(CREATE_USER_NAMESPACE)
+                    .get(testID + "user", UserEntity.class)).getId()));
             if (executeUpdate > 0) {
                 context.getStore(CREATE_USER_NAMESPACE).remove(testId);
             }

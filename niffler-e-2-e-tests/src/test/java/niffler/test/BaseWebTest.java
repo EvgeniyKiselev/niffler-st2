@@ -11,6 +11,8 @@ public abstract class BaseWebTest {
 
   static final String PASSWORD = "qwer321";
 
+  String nifflerTitle = "Niffler. The coin keeper.";
+
   static {
     Configuration.browserSize = "1920x1080";
   }

@@ -1,12 +1,15 @@
 package niffler.jupiter.annotation;
 
 import niffler.jupiter.extension.CreateUserViaDB;
+import niffler.model.DBType;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+
+import static niffler.model.DBType.*;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
@@ -26,4 +29,6 @@ public @interface CreateUser {
     boolean credentialsNonExpired() default true;
 
     boolean deleteAfterTest() default true;
+
+    DBType dbType() default HIBERNATE;
 }

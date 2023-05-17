@@ -28,7 +28,7 @@ public class LoginTest extends BaseWebTest {
     $("button[type='submit']").click();
 
     $("a[href*='friends']").click();
-    $(".header").should(visible).shouldHave(text("Niffler. The coin keeper."));
+    $(".header").should(visible).shouldHave(text(nifflerTitle));
   }
 
 }

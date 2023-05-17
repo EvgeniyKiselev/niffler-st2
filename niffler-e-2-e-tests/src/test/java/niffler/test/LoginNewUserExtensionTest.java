@@ -4,25 +4,26 @@ import com.codeborne.selenide.Selenide;
 import io.qameta.allure.Allure;
 import io.qameta.allure.AllureId;
 import niffler.db.entity.UserEntity;
-import niffler.jupiter.annotation.CreateUser;
+import niffler.jupiter.annotation.GenerateRandomUserEntity;
+import niffler.jupiter.extension.GenerateRandomUserEntityExtension;
 import org.junit.jupiter.api.Test;
-
-import java.io.IOException;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selenide.$;
 
-public class LoginNewUserTest extends BaseWebTest {
+@ExtendWith(GenerateRandomUserEntityExtension.class)
+public class LoginNewUserExtensionTest extends BaseWebTest {
 
-    @AllureId("264")
+    @GenerateRandomUserEntity
+    @AllureId("265")
     @Test
-    @CreateUser(username = "TestUser", password = "12345", enabled = true)
-    void loginTest(UserEntity user) throws IOException {
+    void loginTest(UserEntity userEntity) {
         Allure.step("open page", () -> Selenide.open("http://127.0.0.1:3000/main"));
         $("a[href*='redirect']").click();
-        $("input[name='username']").setValue(user.getUsername());
-        $("input[name='password']").setValue(user.getPassword());
+        $("input[name='username']").setValue(userEntity.getUsername());
+        $("input[name='password']").setValue(userEntity.getPassword());
         $("button[type='submit']").click();
 
         $("a[href*='friends']").click();
