@@ -1,6 +1,6 @@
 package niffler.jupiter.annotation;
 
-import niffler.jupiter.extension.CreateUserViaDB;
+import niffler.jupiter.extension.CreateUserByDB;
 import niffler.model.DBType;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -13,7 +13,7 @@ import static niffler.model.DBType.*;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-@ExtendWith(CreateUserViaDB.class)
+@ExtendWith(CreateUserByDB.class)
 public @interface CreateUser {
 
     String username();

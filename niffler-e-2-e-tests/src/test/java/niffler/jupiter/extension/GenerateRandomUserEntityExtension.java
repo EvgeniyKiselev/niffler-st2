@@ -1,49 +1,56 @@
 package niffler.jupiter.extension;
 
-import io.qameta.allure.AllureId;
+import com.github.javafaker.Faker;
 import niffler.db.dao.NifflerUsersDAO;
-import niffler.db.dao.NifflerUsersDAODB;
+import niffler.db.dao.NifflerUsersDAOHibernate;
+import niffler.db.dao.NifflerUsersDAOJdbc;
+import niffler.db.dao.NifflerUsersDAOSpringJdbc;
 import niffler.db.entity.Authority;
 import niffler.db.entity.AuthorityEntity;
 import niffler.db.entity.UserEntity;
 import niffler.jupiter.annotation.GenerateRandomUserEntity;
+import niffler.model.DBType;
 import org.junit.jupiter.api.extension.*;
 
 import java.util.Arrays;
 
-import static niffler.db.entity.RandomDataForUserEntity.randomPassword;
-import static niffler.db.entity.RandomDataForUserEntity.randomUsername;
-import static niffler.jupiter.extension.CreateUserViaDB.CREATE_USER_NAMESPACE;
 
 public class GenerateRandomUserEntityExtension implements ParameterResolver, BeforeEachCallback, AfterEachCallback {
     public static ExtensionContext.Namespace NAMESPACE = ExtensionContext.Namespace
             .create(GenerateRandomUserEntityExtension.class);
-    NifflerUsersDAO usersDAO = new NifflerUsersDAODB();
+
+    static Faker faker = new Faker();
+    public static String userPassword = faker.internet().password();
 
     @Override
     public void beforeEach(ExtensionContext context) {
-        UserEntity ue = new UserEntity();
         GenerateRandomUserEntity annotation = context.getRequiredTestMethod()
                 .getAnnotation(GenerateRandomUserEntity.class);
+        System.out.println(annotation.dbType().toString());
+        NifflerUsersDAO usersDAO = annotation.dbType().equals(DBType.JDBC) ? new NifflerUsersDAOJdbc() :
+                annotation.dbType().equals(DBType.SPRING) ? new NifflerUsersDAOSpringJdbc() : new NifflerUsersDAOHibernate();
 
-        if (annotation != null) {
 
-            ue.setUsername(randomUsername);
-            ue.setPassword(randomPassword);
-            ue.setEnabled(true);
-            ue.setAccountNonExpired(true);
-            ue.setAccountNonLocked(true);
-            ue.setCredentialsNonExpired(true);
-            ue.setAuthorities(Arrays.stream(Authority.values()).map(
-                    a -> {
-                        AuthorityEntity ae = new AuthorityEntity();
-                        ae.setAuthority(a);
-                        return ae;
-                    }
-            ).toList());
-            usersDAO.createUser(ue);
-            context.getStore(NAMESPACE).put("userEntity", ue);
-        }
+        UserEntity createdUserEntity = new UserEntity();
+        createdUserEntity.setUsername(
+                (faker.name().username()));
+        createdUserEntity.setPassword(
+                (userPassword));
+        createdUserEntity.setEnabled(true);
+        createdUserEntity.setAccountNonExpired(true);
+        createdUserEntity.setAccountNonLocked(true);
+        createdUserEntity.setCredentialsNonExpired(true);
+        createdUserEntity.setAuthorities(Arrays.stream(Authority.values()).map(
+                a -> {
+                    AuthorityEntity ae = new AuthorityEntity();
+                    ae.setAuthority(a);
+                    ae.setUser(createdUserEntity);
+                    return ae;
+                }
+        ).toList());
+        usersDAO.createUser(createdUserEntity);
+        createdUserEntity.setPassword(userPassword);
+        context.getStore(NAMESPACE).put("userEntity", createdUserEntity);
     }
 
     @Override
@@ -60,12 +67,13 @@ public class GenerateRandomUserEntityExtension implements ParameterResolver, Bef
 
     @Override
     public void afterEach(ExtensionContext context) {
+        UserEntity ue = context.getStore(NAMESPACE).get("userEntity", UserEntity.class);
         GenerateRandomUserEntity annotation = context.getRequiredTestMethod()
                 .getAnnotation(GenerateRandomUserEntity.class);
+        NifflerUsersDAO usersDAO = annotation.dbType().equals(DBType.JDBC) ? new NifflerUsersDAOJdbc() :
+                annotation.dbType().equals(DBType.SPRING) ? new NifflerUsersDAOSpringJdbc() : new NifflerUsersDAOHibernate();
 
-        if (annotation != null) {
-            context.getStore(CREATE_USER_NAMESPACE)
-                    .remove(context.getRequiredTestMethod().getAnnotation(AllureId.class).value());
-        }
+        usersDAO.removeUser(ue);
+
     }
 }

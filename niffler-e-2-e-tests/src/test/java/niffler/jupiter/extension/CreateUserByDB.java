@@ -2,7 +2,7 @@ package niffler.jupiter.extension;
 
 import io.qameta.allure.AllureId;
 import niffler.db.dao.NifflerUsersDAO;
-import niffler.db.dao.NifflerUsersDAODB;
+import niffler.db.dao.NifflerUsersDAOHibernate;
 import niffler.db.entity.Authority;
 import niffler.db.entity.AuthorityEntity;
 import niffler.db.entity.UserEntity;
@@ -11,10 +11,11 @@ import org.junit.jupiter.api.extension.*;
 
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.UUID;
 
-public class CreateUserViaDB  implements BeforeEachCallback, AfterEachCallback, ParameterResolver {
+public class CreateUserByDB implements BeforeEachCallback, AfterEachCallback, ParameterResolver {
 
-    public static final ExtensionContext.Namespace CREATE_USER_NAMESPACE = ExtensionContext.Namespace.create(CreateUserViaDB.class);
+    public static final ExtensionContext.Namespace CREATE_USER_NAMESPACE = ExtensionContext.Namespace.create(CreateUserByDB.class);
 
     @Override
     public boolean supportsParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
@@ -37,7 +38,7 @@ public class CreateUserViaDB  implements BeforeEachCallback, AfterEachCallback, 
         UserEntity user;
 
         if(createUserAnno != null) {
-            NifflerUsersDAO usersDAO = new NifflerUsersDAODB();
+            NifflerUsersDAO usersDAO = new NifflerUsersDAOHibernate();
             user = new UserEntity();
             user.setUsername(createUserAnno.username());
             user.setPassword(createUserAnno.password());
@@ -45,8 +46,7 @@ public class CreateUserViaDB  implements BeforeEachCallback, AfterEachCallback, 
             user.setAccountNonExpired(createUserAnno.accountNonExpired());
             user.setAccountNonLocked(createUserAnno.accountNonLocked());
             user.setCredentialsNonExpired(createUserAnno.credentialsNonExpired());
-            user.setDeleteAfterTest(createUserAnno.deleteAfterTest());
-            user.setDbType(createUserAnno.dbType());
+           // user.setDeleteAfterTest(createUserAnno.deleteAfterTest());
             user.setAuthorities(Arrays.stream(Authority.values()).map(
                     a -> {
                         AuthorityEntity ae = new AuthorityEntity();
@@ -67,9 +67,9 @@ public class CreateUserViaDB  implements BeforeEachCallback, AfterEachCallback, 
         int executeUpdate = 0;
 
         if (context.getRequiredTestMethod().getAnnotation(CreateUser.class).deleteAfterTest()) {
-            NifflerUsersDAO usersDAO = new NifflerUsersDAODB();
-            executeUpdate = usersDAO.deleteUser(new UserEntity((context.getStore(CREATE_USER_NAMESPACE)
-                    .get(testID + "user", UserEntity.class)).getId()));
+            NifflerUsersDAO usersDAO = new NifflerUsersDAOHibernate();
+            executeUpdate = usersDAO.removeUser(new UserEntity(UUID.fromString(
+                    usersDAO.getUserId(context.getTestMethod().get().getAnnotation(CreateUser.class).username()))));
             if (executeUpdate > 0) {
                 context.getStore(CREATE_USER_NAMESPACE).remove(testId);
             }
