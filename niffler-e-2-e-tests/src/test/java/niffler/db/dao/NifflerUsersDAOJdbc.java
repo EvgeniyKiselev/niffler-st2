@@ -1,18 +1,13 @@
 package niffler.db.dao;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.UUID;
-import javax.sql.DataSource;
 import niffler.db.DataSourceProvider;
 import niffler.db.ServiceDB;
 import niffler.db.entity.AuthorityEntity;
 import niffler.db.entity.UserEntity;
-import org.springframework.security.crypto.factory.PasswordEncoderFactories;
-import org.springframework.security.crypto.password.PasswordEncoder;
+
+import javax.sql.DataSource;
+import java.sql.*;
+import java.util.UUID;
 
 public class NifflerUsersDAOJdbc implements NifflerUsersDAO {
 
@@ -27,10 +22,10 @@ public class NifflerUsersDAOJdbc implements NifflerUsersDAO {
       conn.setAutoCommit(false);
 
       try (PreparedStatement insertUserSt = conn.prepareStatement("INSERT INTO users "
-          + "(username, password, enabled, account_non_expired, account_non_locked, credentials_non_expired) "
-          + " VALUES (?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
-          PreparedStatement insertAuthoritySt = conn.prepareStatement(
-              "INSERT INTO authorities (user_id, authority) VALUES (?, ?)")) {
+              + "(username, password, enabled, account_non_expired, account_non_locked, credentials_non_expired) "
+              + " VALUES (?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
+           PreparedStatement insertAuthoritySt = conn.prepareStatement(
+                   "INSERT INTO authorities (user_id, authority) VALUES (?, ?)")) {
         insertUserSt.setString(1, user.getUsername());
         insertUserSt.setString(2, pe.encode(user.getPassword()));
         insertUserSt.setBoolean(3, user.getEnabled());
@@ -75,7 +70,7 @@ public class NifflerUsersDAOJdbc implements NifflerUsersDAO {
   @Override
   public String getUserId(String userName) {
     try (Connection conn = ds.getConnection();
-        PreparedStatement st = conn.prepareStatement("SELECT * FROM users WHERE username = ?")) {
+         PreparedStatement st = conn.prepareStatement("SELECT * FROM users WHERE username = ?")) {
       st.setString(1, userName);
       ResultSet resultSet = st.executeQuery();
       if (resultSet.next()) {
@@ -97,8 +92,8 @@ public class NifflerUsersDAOJdbc implements NifflerUsersDAO {
       conn.setAutoCommit(false);
 
       try (PreparedStatement deleteUserSt = conn.prepareStatement("DELETE FROM users WHERE id = ?");
-          PreparedStatement deleteAuthoritySt = conn.prepareStatement(
-              "DELETE FROM authorities WHERE user_id = ?")) {
+           PreparedStatement deleteAuthoritySt = conn.prepareStatement(
+                   "DELETE FROM authorities WHERE user_id = ?")) {
         deleteUserSt.setObject(1, user.getId());
         deleteAuthoritySt.setObject(1, user.getId());
 
@@ -117,6 +112,30 @@ public class NifflerUsersDAOJdbc implements NifflerUsersDAO {
     } catch (SQLException e) {
       throw new RuntimeException(e);
     }
+    return executeUpdate;
+  }
+
+  @Override
+  public int updateUser(UserEntity user) {
+    int executeUpdate;
+
+    try (Connection conn = ds.getConnection();
+         PreparedStatement st1 = conn.prepareStatement("UPDATE users SET "
+                 + "(username, password, enabled, account_non_expired, account_non_locked, credentials_non_expired)="
+                 + "(?, ?, ?, ?, ?, ?) WHERE id=(?)")) {
+      st1.setString(1, user.getUsername());
+      st1.setString(2, pe.encode(user.getPassword()));
+      st1.setBoolean(3, user.getEnabled());
+      st1.setBoolean(4, user.getAccountNonExpired());
+      st1.setBoolean(5, user.getAccountNonLocked());
+      st1.setBoolean(6, user.getCredentialsNonExpired());
+      st1.setObject(7, user.getId());
+
+      executeUpdate = st1.executeUpdate();
+    } catch (SQLException e) {
+      throw new RuntimeException(e);
+    }
+
     return executeUpdate;
   }
 }

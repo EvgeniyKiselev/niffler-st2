@@ -1,6 +1,5 @@
 package niffler.db.dao;
 
-import java.util.UUID;
 import niffler.db.entity.UserEntity;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -14,4 +13,5 @@ public interface NifflerUsersDAO {
 
   int removeUser(UserEntity user);
 
+  int updateUser(UserEntity user);
 }
