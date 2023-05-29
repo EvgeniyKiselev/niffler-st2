@@ -16,8 +16,8 @@ import static com.codeborne.selenide.Selenide.$;
 public class LoginNewUserTest extends BaseWebTest {
 
     @AllureId("264")
+    @CreateUser(username = "TestUser001", password = "12345", enabled = true)
     @Test
-    @CreateUser(username = "TestUser", password = "12345", enabled = true)
     void loginTest(UserEntity user) throws IOException {
         Allure.step("open page", () -> Selenide.open("http://127.0.0.1:3000/main"));
         $("a[href*='redirect']").click();

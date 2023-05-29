@@ -12,7 +12,7 @@ import org.junit.jupiter.api.extension.*;
 import java.util.Arrays;
 import java.util.Objects;
 
-public class CreateUserViaDB  implements BeforeEachCallback, AfterEachCallback, ParameterResolver {
+public class CreateUserViaDB implements BeforeEachCallback, AfterEachCallback, ParameterResolver {
 
     public static final ExtensionContext.Namespace CREATE_USER_NAMESPACE = ExtensionContext.Namespace.create(CreateUserViaDB.class);
 
@@ -36,7 +36,7 @@ public class CreateUserViaDB  implements BeforeEachCallback, AfterEachCallback, 
 
         UserEntity user;
 
-        if(createUserAnno != null) {
+        if (createUserAnno != null) {
             NifflerUsersDAO usersDAO = new NifflerUsersDAOJdbc();
             user = new UserEntity();
             user.setUsername(createUserAnno.username());
